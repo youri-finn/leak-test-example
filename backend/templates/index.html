@@ -11,5 +11,15 @@
     <h1>Welcome to the Leak Test Upload Website</h1>
     <p>My name is {{prenom}} {{nom}}</p>
     <p>Today it is {{vandaag}}</p>
+    <h2>Upload a file!</h2>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".xls, .xlsx">
+        <button type="submit">Analyze!</button>
+    </form>
+    {% if average %}
+        <p>The average is {{average}}</p>
+        <h3>Pressure Decay Plot</h3>
+        <img src="{{ url_for('decay_plot') }}" alt="Matplotlib Plot">
+    {% endif %}
 </body>
 </html>
