@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify, render_template, send_file
 import pandas as pd
 import io
+import os
 import matplotlib.pyplot as plt
 from datetime import date
 
 app = Flask(__name__)
+UPLOAD_FOLDER = '/tmp/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
@@ -26,7 +29,8 @@ def home():
             return jsonify({'error': 'No selected file'}), 400
 
         if file.filename.endswith(('.xls', '.xlsx')):
-            global df
+            filepath = os.path.join(UPLOAD_FOLDER, 'uploaded_temporary_data.xls')
+            file.save(filepath)
             df = pd.read_excel(file)
         else:
             return jsonify({'error': 'Unsupported file format'}), 400
@@ -37,6 +41,9 @@ def home():
 
 @app.route('/plot')
 def decay_plot():
+
+    filepath = os.path.join(UPLOAD_FOLDER, 'uploaded_temporary_data.xls')
+    df = pd.read_excel(filepath)
 
     plt.figure()
     plt.plot(df.Date, df.Temperature, label='Temperature')
